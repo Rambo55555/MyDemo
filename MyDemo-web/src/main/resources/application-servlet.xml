@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	default-lazy-init="true"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd 
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.csair.tang.b2c.controller"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean id="jsonHttpMessageConverter"
+				class="com.csair.tang.b2c.utils.MappingJackson2HttpMessageConverterEx">
+				<property name="objectMapper" ref="jacksonObjectMapper" />
+
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+						<value>text/plain;charset=UTF-8</value>
+					</list>
+				</property>
+
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<mvc:interceptors>
+		<!-- 如果不定义 mvc:mapping path 将拦截所有的URL请求 -->
+		<bean class="com.csair.tang.b2c.auth.SSLInterceptor"></bean>
+		<bean class="com.csair.tang.b2c.auth.AuthInterceptor"></bean>
+		<!-- <bean class="com.csair.tang.b2c.filter.LogTraceInterceptor"></bean> -->
+	</mvc:interceptors>
+
+
+	<bean
+		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+		<property name="caseSensitive" value="true"></property>
+	</bean>
+
+	<!-- 如果当前请求为“/”时，则转发到“/home/hello” -->
+	<!-- <mvc:view-controller path="/" view-name="redirect:/pages/home.do" /> -->
+	
+
+	<!-- 静态资源映射 -->
+	<mvc:resources mapping="/js/**" location="/resources/js/" />
+	<mvc:resources mapping="/css/**" location="/resources/css/" />
+	<mvc:resources mapping="/images/**" location="/resources/images/" />
+    <mvc:resources mapping="/modules/**" location="/resources/modules/" />
+    <mvc:resources mapping="/templates/**" location="/resources/templates/" />
+    <mvc:resources mapping="/json/**" location="/resources/json/" />
+	<!-- 当上面要访问的静态资源不包括在上面的配置中时，则根据此配置来访问 -->
+	<mvc:default-servlet-handler />
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver"
+		p:order="0"></bean>
+	<!-- 混合多种视图技术 -->
+	
+	<!-- 视图解释类org.springframework.web.servlet.view.InternalResourceViewResolver -->
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+		p:order="100">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".html" /><!-- 可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑 -->
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+	<bean
+		class="com.csair.tang.b2c.extend.PreventRespCommittedExceptionResolver">
+		<!-- 定义默认的异常处理页面，当该异常类型的注册时使用 -->
+		<property name="defaultErrorView" value="common/error"></property>
+		<!-- 定义异常处理页面用来获取异常信息的变量名，默认名为exception -->
+		<property name="exceptionAttribute" value="exceptionMessage"></property>
+		<!-- 定义需要特殊处理的异常，用类名或完全路径名作为key，异常也页名作为值 -->
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.csair.tang.tangbc.exception.ServiceException">common/error</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="jacksonObjectMapper"
+		class="com.csair.tang.b2c.utils.CustomObjectMapper">
+		<property name="dateFormat">
+			<bean class="java.text.SimpleDateFormat">
+				<constructor-arg type="java.lang.String" value="yyyy-MM-dd" />
+			</bean>
+		</property>
+
+
+		<!--<property name="featuresToDisable"> <array> <util:constant static-field="com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS"/> 
+			</array> </property> -->
+	</bean>
+</beans>

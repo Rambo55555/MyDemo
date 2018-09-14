@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="../components/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/ajax.js"></script>
+</head>
+<body>
+<font color="blue" >${data.username}</font>,欢迎。。。
+</body>
+<script>
+
+$(function(){
+ 
+    $.ajax({
+    	type : "POST",
+        dataType:"json",
+        type:"POST",
+        url:"../checkUser",
+        success:function(data){
+            console.log(data);
+        }
+    });
+});
+</script>
+</html>

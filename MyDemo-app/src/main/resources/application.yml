@@ -1,0 +1,28 @@
+spring:
+  devtools:
+    livereload:
+      port: 35729
+  datasource:
+    url: jdbc:mysql://localhost:3306/MyDemo?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      
+      filter:
+        config:
+          enabled: true
+  application:
+    name: dubbo-demo-provider
+  dubbo:
+    registry:
+      address: zookeeper://127.0.0.1:2181
+    server: true
+    protocol:
+      port: 20880
+      threadpool: cached
+      threads: 300
+      accepts: 500
+      serialization: java
+mybatis:
+  mapperLocations: mybatis-mapping/**Mapper.xml

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>    
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="../components/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/ajax.js"></script>
+    <script type="text/javascript" src="../common/js/store.min.js"></script>
+</head>
+
+<body>
+<h3>登录页面</h3>
+<form >
+	<font color="red" >${requestScope.message}</font>
+	<table>
+		<tr>
+			<td><label>用户ID：</label></td>
+			<td><input type="text" id="id" name="userId" value="1000"/></td>
+		</tr>
+		<tr>
+			<td><label>密码：</label></td>
+			<td><input type="password" id="password" name="password" value="123456"/></td>
+		</tr>
+		<tr>
+			<td><button name="login" type="button" id="login" >登录</button></td>
+		</tr>
+	</table>
+</form>
+</body>
+<script>
+    $(document).ready(function() {
+    	
+    	$("#login").click(function() {
+    		
+    		var userId = $("#id").val();
+    		var password = $("#password").val();
+    		console.log(userId+" "+password);
+    		if (userId == "" || password == "") {
+    			alert("用户名和密码不可以为空!");
+    		} else {
+    			var param = new Object();
+   				param.id = userId;
+   				param.password = password;
+   				loginFun("../login", param);
+    			
+    		}
+    	});
+    });
+
+    function loginFun(urls,param) {
+    	$.ajax({
+    		type : "POST",
+    		url : urls,
+    		data : param,
+    		dataType : "json",
+    		contentType: "application/x-www-form-urlencoded",
+    		success : function(data,textStatus,jqXHR) {
+    			console.log(data,);
+    			console.log(textStatus);
+    			console.log(jqXHR);
+    			if (data.message != "fail") {
+    				
+    				alert("登陆成功");
+    				window.location = 'home.html';
+    			}else{
+    				alert("账号密码错误");
+    			}
+    		}
+    	});
+    }
+    </script>
+</html>

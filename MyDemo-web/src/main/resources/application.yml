@@ -1,0 +1,38 @@
+spring:
+  devtools:
+    livereload:
+      port: 35728
+  application:
+    name: dubbo-demo-web
+  dubbo:
+    registry:
+      address: zookeeper://127.0.0.1:2181
+    protocol:
+      port: 20880
+      threadpool: cached
+      threads: 300
+      accepts: 500
+      serialization: java
+  cache:
+    redis:
+      key-prefix: dubbo-demo-provider-cache-
+      time-to-live: 10s
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 3s
+  mvc:
+    static-path-pattern: /**
+    resources:
+        static-locations: classpath:/META-INF/resources/,classpath:/resources/, classpath:/static/, classpath:/public/
+shiro:
+  loginUrl: ${shiro.casServerUrlPrefix}?service=${shiro.webUrl}
+  successUrl: null
+  webUrl: http://127.0.0.1:8080/demo/shiro-cas
+  unauthorizedUrl: ${shiro.casServerUrlPrefix}?service=${shiro.webUrl}
+  casServerUrlPrefix: http://10.79.10.21:8080/cas
+server:
+  port: 8080
+  servlet:
+    context-path: /MyDemo
+    
